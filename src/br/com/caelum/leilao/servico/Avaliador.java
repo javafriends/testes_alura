@@ -16,6 +16,9 @@ public class Avaliador {
 
 	public void avalia(Leilao leilao) {
 
+		if(leilao.getLances().size() ==0)
+            throw new RuntimeException("Não é possível avaliar um leilão sem lances");
+
 
 		maiorDeTodos  = leilao.getLances().stream()
 											.mapToDouble(l -> l.getValor()).summaryStatistics().getMax();

@@ -1,6 +1,8 @@
 package br.com.caelum.leilao.test;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
@@ -33,21 +35,17 @@ public class AvaliadorTest {
 	@Test
 	public void devemEntenderLancesEmOrdemCrescente() {
 
+		Leilao leilao = new CriadorDeLeilao()
+	            .para("Playstation 3 Novo")
+	            .lance(joao, 250)
+	            .lance(jose, 300)
+	            .lance(maria, 400)
+	            .constroi();
 
+	        leiloeiro.avalia(leilao);
 
-		Leilao leilao = new Leilao("Playstation 4 Pro");
-
-		leilao.propoe(new Lance(joao, 250));
-		leilao.propoe(new Lance(jose, 300));
-		leilao.propoe(new Lance(maria, 400));
-
-		leiloeiro.avalia(leilao);
-
-		double maiorEsperado = 400;
-		double menorEsperado = 250;
-
-		assertEquals(maiorEsperado, leiloeiro.getMaiorLance(), 0.00001);
-		assertEquals(menorEsperado, leiloeiro.getMenorLance(), 0.00001);
+	        assertThat(leiloeiro.getMenorLance(), equalTo(250.0));
+	        assertEquals(400.0, leiloeiro.getMaiorLance(), 0.00001);
 
 	}
 
@@ -81,6 +79,14 @@ public class AvaliadorTest {
 		assertEquals(600.00, maiores.get(1).getValor(),0.00001);
 		assertEquals(400.00, maiores.get(2).getValor(),0.00001);
 
+	}
 
+	@Test(expected=RuntimeException.class)
+	public void naoDeveAvaliarLeiloesSemNenhumLanceDado() {
+	    Leilao leilao = new CriadorDeLeilao()
+	        .para("Playstation 3 Novo")
+	        .constroi();
+
+	    leiloeiro.avalia(leilao);
 	}
 }
