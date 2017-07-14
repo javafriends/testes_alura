@@ -4,8 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import br.com.caelum.leilao.builder.CriadorDeLeilao;
 import br.com.caelum.leilao.dominio.Lance;
 import br.com.caelum.leilao.dominio.Leilao;
 import br.com.caelum.leilao.dominio.Usuario;
@@ -13,12 +15,25 @@ import br.com.caelum.leilao.servico.Avaliador;
 
 public class AvaliadorTest {
 
+	private Avaliador leiloeiro;
+	private Usuario joao;
+    private Usuario jose;
+    private Usuario maria;
+    private Usuario antonio;;
+
+	@Before
+	public void init() {
+		this.leiloeiro = new Avaliador();
+		this.joao = new Usuario("João");
+		this.jose = new Usuario("José");
+		this.maria = new Usuario("Maria");
+		this.antonio = new Usuario("Antônio");
+	}
+
 	@Test
 	public void devemEntenderLancesEmOrdemCrescente() {
 
-		Usuario joao = new Usuario("João");
-		Usuario jose = new Usuario("José");
-		Usuario maria = new Usuario("Maria");
+
 
 		Leilao leilao = new Leilao("Playstation 4 Pro");
 
@@ -26,7 +41,6 @@ public class AvaliadorTest {
 		leilao.propoe(new Lance(jose, 300));
 		leilao.propoe(new Lance(maria, 400));
 
-		Avaliador leiloeiro = new Avaliador();
 		leiloeiro.avalia(leilao);
 
 		double maiorEsperado = 400;
@@ -39,11 +53,9 @@ public class AvaliadorTest {
 
 	@Test
 	public void devemEntenderLeilaoComUmLance() {
-		Usuario joao = new Usuario("João");
 		Leilao leilao = new Leilao("Playstation 4 Pro");
 
 		leilao.propoe(new Lance(joao, 1000));
-		Avaliador leiloeiro = new Avaliador();
 		leiloeiro.avalia(leilao);
 
 		assertEquals(1000.00, leiloeiro.getMaiorLance(), 0.00001);
@@ -53,19 +65,14 @@ public class AvaliadorTest {
 
 	@Test
 	public void deveEncontrarOsTresMaioresLances() {
-		Usuario joao = new Usuario("João");
-		Usuario jose = new Usuario("José");
-		Usuario maria = new Usuario("Maria");
-		Usuario antonio = new Usuario("Antônio");
 
-		Leilao leilao = new Leilao("Playstation 4 Pro");
+		Leilao leilao = new CriadorDeLeilao().para("Playstation 3 Novo")
+                .lance(joao, 600.0)
+                .lance(maria, 400.0)
+                .lance(joao, 800.0)
+                .lance(maria, 300.0)
+                .constroi();
 
-		leilao.propoe(new Lance(joao, 800));
-		leilao.propoe(new Lance(jose, 600));
-		leilao.propoe(new Lance(maria, 400));
-		leilao.propoe(new Lance(antonio, 200));
-
-		Avaliador leiloeiro = new Avaliador();
 		leiloeiro.avalia(leilao);
 
 		List<Lance> maiores = leiloeiro.getTresMaiores();
